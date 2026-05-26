@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Grand Palace Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<div id="sidebarOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99;"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><div class="logo-icon">GP</div><div><div class="logo-text">Grand Palace</div><div class="logo-sub">Admin Portal</div></div></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <a href="dashboard.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="rooms.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Rooms</a>
+    <a href="bookings.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Bookings</a>
+    <div class="nav-section">Management</div>
+    <a href="guests.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Guests</a>
+    <a href="pricing.html" class="nav-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Pricing</a>
+    <a href="services.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>Room Services</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info"><div class="user-avatar" id="userAvatar">A</div><div><div class="user-name" id="userName">Admin</div><div class="user-role" id="userRole">Administrator</div></div></div>
+    <button class="logout-btn" onclick="logout()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+  </div>
+</aside>
+
+<div class="main-content">
+  <div class="top-bar">
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    <h1>Seasonal Pricing</h1>
+    <button class="btn btn-gold" onclick="openModal('pricingModal')">+ Add Rule</button>
+  </div>
+  <div class="page-content">
+    <div id="alertBox"></div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Season Name</th><th>Start Date</th><th>End Date</th><th>Room Type</th><th>Multiplier</th><th>Actions</th></tr></thead>
+          <tbody id="pricingTable"><tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="pricingModal">
+  <div class="modal" style="max-width:460px;">
+    <div class="modal-header">
+      <div class="modal-title" id="pricingModalTitle">Add Pricing Rule</div>
+      <button class="modal-close" onclick="closeModal('pricingModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editPricingId">
+      <div class="form-group"><label>Season Name *</label><input type="text" id="pSeasonName" placeholder="e.g. Peak Summer"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Start Date *</label><input type="date" id="pStartDate"></div>
+        <div class="form-group"><label>End Date *</label><input type="date" id="pEndDate"></div>
+      </div>
+      <div class="form-group">
+        <label>Room Type</label>
+        <select id="pRoomType"><option value="">All Types</option><option>Single</option><option>Double</option><option>Suite</option><option>Deluxe</option></select>
+      </div>
+      <div class="form-group">
+        <label>Price Multiplier * (e.g. 1.5 = 50% increase)</label>
+        <input type="number" id="pMultiplier" placeholder="1.5" min="0.1" step="0.05">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('pricingModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="savePricing()">Save Rule</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+requireAdmin();
+initSidebar();
+let allPricing = [];
+
+async function loadPricing() {
+  try {
+    allPricing = await api.get('/pricing');
+    const tbody = document.getElementById('pricingTable');
+    if (allPricing.length === 0) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>No pricing rules</p></div></td></tr>'; return; }
+    tbody.innerHTML = allPricing.map(p => `<tr>
+      <td><strong>${p.SeasonName}</strong></td>
+      <td>${formatDate(p.StartDate)}</td>
+      <td>${formatDate(p.EndDate)}</td>
+      <td>${p.RoomType || 'All Types'}</td>
+      <td><span class="badge badge-blue">${p.PriceMultiplier}x</span></td>
+      <td><div style="display:flex;gap:6px;">
+        <button class="btn btn-sm btn-outline" onclick="editPricing(${p.PricingId})">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deletePricing(${p.PricingId})">Delete</button>
+      </div></td>
+    </tr>`).join('');
+  } catch(e) { showAlert('alertBox', e.message); }
+}
+
+function editPricing(id) {
+  const p = allPricing.find(x => x.PricingId === id);
+  if (!p) return;
+  document.getElementById('editPricingId').value = id;
+  document.getElementById('pricingModalTitle').textContent = 'Edit Pricing Rule';
+  document.getElementById('pSeasonName').value = p.SeasonName;
+  document.getElementById('pStartDate').value = p.StartDate ? p.StartDate.split('T')[0] : '';
+  document.getElementById('pEndDate').value = p.EndDate ? p.EndDate.split('T')[0] : '';
+  document.getElementById('pRoomType').value = p.RoomType || '';
+  document.getElementById('pMultiplier').value = p.PriceMultiplier;
+  openModal('pricingModal');
+}
+
+async function savePricing() {
+  const id = document.getElementById('editPricingId').value;
+  const body = {
+    SeasonName: document.getElementById('pSeasonName').value.trim(),
+    StartDate: document.getElementById('pStartDate').value,
+    EndDate: document.getElementById('pEndDate').value,
+    RoomType: document.getElementById('pRoomType').value || null,
+    PriceMultiplier: parseFloat(document.getElementById('pMultiplier').value),
+  };
+  if (!body.SeasonName || !body.StartDate || !body.EndDate || !body.PriceMultiplier) {
+    showAlert('alertBox', 'All required fields must be filled.'); return;
+  }
+  try {
+    if (id) await api.put(`/pricing/${id}`, body);
+    else await api.post('/pricing', body);
+    closeModal('pricingModal');
+    showAlert('alertBox', 'Pricing rule saved!', 'success');
+    loadPricing();
+  } catch(e) { showAlert('alertBox', e.message); }
+}
+
+async function deletePricing(id) {
+  if (!confirmAction('Delete this pricing rule?')) return;
+  try {
+    await api.delete(`/pricing/${id}`);
+    showAlert('alertBox', 'Rule deleted.', 'success');
+    loadPricing();
+  } catch(e) { showAlert('alertBox', e.message); }
+}
+
+function openModal(id) {
+  document.getElementById('editPricingId').value = '';
+  document.getElementById('pricingModalTitle').textContent = 'Add Pricing Rule';
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+loadPricing();
+</script>
+</body>
+</html>

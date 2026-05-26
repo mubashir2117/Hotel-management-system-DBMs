@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us — Grand Palace Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+  .about-section {
+    padding: 60px 0;
+    text-align: center;
+    background-color: var(--white);
+  }
+  .about-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    color: var(--navy);
+    margin-bottom: 20px;
+  }
+  .about-section p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 800px;
+    margin: 0 auto 30px;
+    line-height: 1.8;
+  }
+  .about-image {
+    width: 100%;
+    max-width: 900px;
+    height: 450px;
+    /* Replaced dummy placeholder with a high-quality luxury hotel image */
+    background: url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80') no-repeat center center/cover;
+    border-radius: var(--radius);
+    margin: 30px auto;
+    box-shadow: var(--shadow-md);
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  .feature-item {
+    background: var(--bg);
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+  }
+  .feature-item h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .feature-item p {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 0; /* Override global p margin */
+  }
+  @media (max-width: 768px) {
+    .about-section h2 {
+      font-size: 28px;
+    }
+    .about-section p {
+      font-size: 14px;
+      padding: 0 15px;
+    }
+    .about-image {
+      height: 250px;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="sidebarOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99;"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><div class="logo-icon">GP</div><div><div class="logo-text">Grand Palace</div><div class="logo-sub">Guest Portal</div></div></div>
+  <nav class="sidebar-nav">
+    <a href="dashboard.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>My Dashboard</a>
+    <a href="browse-rooms.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Browse Rooms</a>
+    <a href="my-bookings.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>My Bookings</a>
+    <a href="room-service.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>Room Service</a>
+    <a href="about.html" class="nav-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About Us</a>
+    <a href="contact.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Contact Us</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info"><div class="user-avatar" id="userAvatar">G</div><div><div class="user-name" id="userName">Guest</div><div class="user-role" id="userRole">Guest</div></div></div>
+    <button class="logout-btn" onclick="logout()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+  </div>
+</aside>
+
+<div class="main-content">
+  <div class="top-bar">
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    <h1>About Us</h1>
+  </div>
+  <div class="page-content">
+    <div class="about-section">
+      <h2>Welcome to Grand Palace Hotel</h2>
+      <p>
+        Nestled in the heart of the city, Grand Palace Hotel offers a luxurious escape with unparalleled service and breathtaking views.
+        Since our inception in 1990, we have been dedicated to providing an exceptional experience for every guest, combining classic elegance with modern amenities.
+      </p>
+      <div class="about-image"></div>
+      <p>
+        Our commitment to excellence is reflected in every detail, from our meticulously designed rooms to our world-class dining options and state-of-the-art facilities.
+        We believe in creating lasting memories and moments of pure relaxation and indulgence for all who walk through our doors.
+      </p>
+      <div class="features-grid">
+        <div class="feature-item">
+          <h3>Exquisite Accommodations</h3>
+          <p>Each room and suite is a sanctuary of comfort, designed with elegant furnishings and equipped with premium amenities to ensure a restful stay.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Fine Dining Experiences</h3>
+          <p>Indulge your palate with our diverse culinary offerings, from gourmet international cuisine to local delicacies, prepared by award-winning chefs.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Unmatched Hospitality</h3>
+          <p>Our dedicated team provides personalized service, attending to your every need with warmth and efficiency, making your stay truly memorable.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+  requireGuest();
+  initSidebar();
+  
+  document.getElementById('userName').textContent = localStorage.getItem('hotelName') || 'Guest';
+  document.getElementById('userAvatar').textContent = (localStorage.getItem('hotelName') || 'G')[0];
+
+  function initSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.getElementById('hamburger');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    // Safe handling to avoid double binding if auth.js already sets up listeners
+    if (hamburger && sidebar && sidebarOverlay) {
+      // Remove old listeners by replacing elements or simple checking if needed, 
+      // but standard event listener addition works clean here.
+      hamburger.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+        sidebarOverlay.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+      });
+
+      sidebarOverlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        sidebarOverlay.style.display = 'none';
+      });
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bookings — Grand Palace Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<div id="sidebarOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99;"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><div class="logo-icon">GP</div><div><div class="logo-text">Grand Palace</div><div class="logo-sub">Admin Portal</div></div></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <a href="dashboard.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="rooms.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Rooms</a>
+    <a href="bookings.html" class="nav-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Bookings</a>
+    <div class="nav-section">Management</div>
+    <a href="guests.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Guests</a>
+    <a href="pricing.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Pricing</a>
+    <a href="services.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>Room Services</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info"><div class="user-avatar" id="userAvatar">A</div><div><div class="user-name" id="userName">Admin</div><div class="user-role" id="userRole">Administrator</div></div></div>
+    <button class="logout-btn" onclick="logout()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+  </div>
+</aside>
+
+<div class="main-content">
+  <div class="top-bar">
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    <h1>Bookings</h1>
+  </div>
+  <div class="page-content">
+    <div id="alertBox"></div>
+    <div class="card">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <select class="filter-select" id="filterStatus" onchange="applyFilters()">
+            <option value="">All Status</option>
+            <option>Pending</option><option>Confirmed</option><option>Checked-In</option><option>Checked-Out</option><option>Cancelled</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Booking ID</th><th>Guest</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Nights</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="bookingsTable"><tr><td colspan="9"><div class="loading"><div class="spinner"></div> Loading...</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+requireAdmin();
+initSidebar();
+let allBookings = [];
+
+async function loadBookings() {
+  try {
+    allBookings = await api.get('/bookings');
+    renderBookings(allBookings);
+  } catch(e) {
+    document.getElementById('bookingsTable').innerHTML = `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--danger);">${e.message}</td></tr>`;
+  }
+}
+
+function renderBookings(bookings) {
+  const tbody = document.getElementById('bookingsTable');
+  if (bookings.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><p>No bookings found</p></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = bookings.map(b => {
+    const actions = getActions(b);
+    return `<tr>
+      <td><span style="font-size:12px;color:#6b7a8d;">#${b.BookingId}</span></td>
+      <td><strong>${b.GuestName || '—'}</strong><br><span style="font-size:12px;color:#6b7a8d;">${b.GuestEmail || ''}</span></td>
+      <td>Room ${b.RoomNumber || b.RoomId}</td>
+      <td>${formatDate(b.CheckInDate)}</td>
+      <td>${formatDate(b.CheckOutDate)}</td>
+      <td>${b.Nights}</td>
+      <td><strong>${formatCurrency(b.TotalPrice)}</strong></td>
+      <td>${statusBadge(b.Status)}</td>
+      <td><div style="display:flex;gap:4px;flex-wrap:wrap;">${actions}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function getActions(b) {
+  let btns = '';
+  if (b.Status === 'Pending') btns += `<button class="btn btn-sm btn-success" onclick="updateStatus(${b.BookingId},'Confirmed')">Confirm</button>`;
+  if (b.Status === 'Confirmed') btns += `<button class="btn btn-sm btn-primary" onclick="updateStatus(${b.BookingId},'Checked-In')">Check-In</button>`;
+  if (b.Status === 'Checked-In') btns += `<button class="btn btn-sm btn-outline" onclick="updateStatus(${b.BookingId},'Checked-Out')">Check-Out</button>`;
+  if (['Pending','Confirmed'].includes(b.Status)) btns += `<button class="btn btn-sm btn-danger" onclick="updateStatus(${b.BookingId},'Cancelled')">Cancel</button>`;
+  return btns || '<span style="color:#6b7a8d;font-size:12px;">No actions</span>';
+}
+
+async function updateStatus(id, status) {
+  if (!confirmAction(`Set booking #${id} to "${status}"?`)) return;
+  try {
+    await api.patch(`/bookings/${id}/status`, { Status: status });
+    showAlert('alertBox', `Booking updated to ${status}`, 'success');
+    loadBookings();
+  } catch(e) { showAlert('alertBox', e.message); }
+}
+
+function applyFilters() {
+  const status = document.getElementById('filterStatus').value;
+  renderBookings(status ? allBookings.filter(b => b.Status === status) : allBookings);
+}
+
+loadBookings();
+</script>
+</body>
+</html>

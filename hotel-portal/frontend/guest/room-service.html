@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Room Service — Grand Palace Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+.category-section { margin-bottom:28px; }
+.category-title { font-family:'Playfair Display',serif; font-size:17px; font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:10px; }
+.category-title::after { content:''; flex:1; height:1px; background:var(--border); }
+.menu-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
+.menu-item { background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:16px; display:flex; flex-direction:column; gap:8px; transition:all 0.2s; }
+.menu-item:hover { border-color:var(--gold); box-shadow:0 2px 12px rgba(201,168,76,0.1); }
+.menu-item-name { font-weight:600; font-size:14px; }
+.menu-item-price { color:var(--gold-dark); font-weight:700; font-size:16px; }
+.menu-item-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; }
+.qty-control { display:flex; align-items:center; gap:8px; }
+.qty-btn { width:28px; height:28px; border:1px solid var(--border); border-radius:6px; background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:600; transition:all 0.15s; }
+.qty-btn:hover { background:var(--navy); color:#fff; border-color:var(--navy); }
+.qty-val { font-size:15px; font-weight:600; min-width:20px; text-align:center; }
+.cart-panel { position:fixed; right:0; top:0; height:100vh; width:320px; background:#fff; border-left:1px solid var(--border); box-shadow:-4px 0 20px rgba(0,0,0,0.08); z-index:200; transform:translateX(100%); transition:transform 0.3s; display:flex; flex-direction:column; }
+.cart-panel.open { transform:translateX(0); }
+.cart-header { padding:20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.cart-title { font-family:'Playfair Display',serif; font-size:18px; font-weight:600; }
+.cart-items { flex:1; overflow-y:auto; padding:16px; }
+.cart-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); font-size:13.5px; }
+.cart-footer { padding:16px; border-top:1px solid var(--border); }
+.cart-total { display:flex; justify-content:space-between; font-weight:600; font-size:16px; margin-bottom:12px; }
+.cart-badge { position:absolute; top:-6px; right:-6px; background:var(--gold); color:var(--navy); border-radius:50%; width:20px; height:20px; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.cat-icons { Food:'🍽️', Beverage:'🥤', Housekeeping:'🛏️', Laundry:'👕', Maintenance:'🔧' }
+</style>
+</head>
+<body>
+<div id="sidebarOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99;"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><div class="logo-icon">GP</div><div><div class="logo-text">Grand Palace</div><div class="logo-sub">Guest Portal</div></div></div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>My Dashboard</a>
+    <a href="browse-rooms.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Browse Rooms</a>
+    <a href="my-bookings.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>My Bookings</a>
+    <a href="room-service.html" class="nav-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>Room Service</a>
+    <a href="about.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About Us</a>
+    <a href="contact.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Contact Us</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info"><div class="user-avatar" id="userAvatar">G</div><div><div class="user-name" id="userName">Guest</div><div class="user-role" id="userRole">Guest</div></div></div>
+    <button class="logout-btn" onclick="logout()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+  </div>
+</aside>
+
+<div class="main-content">
+  <div class="top-bar">
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    <h1>Room Service</h1>
+    <button class="btn btn-gold" onclick="toggleCart()" style="position:relative;">
+      🛒 Cart
+      <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+    </button>
+  </div>
+  <div class="page-content">
+    <div id="alertBox"></div>
+    <div id="noBookingMsg" style="display:none;">
+      <div class="card" style="text-align:center;padding:48px;">
+        <div style="font-size:48px;margin-bottom:16px;">🏨</div>
+        <p style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:8px;">No Active Stay</p>
+        <p style="color:var(--text-muted);margin-bottom:20px;">Room service is only available when you are checked in.</p>
+        <a href="browse-rooms.html" class="btn btn-gold">Browse Rooms</a>
+      </div>
+    </div>
+    <div id="menuArea"></div>
+
+    <div class="card" id="myRequestsCard" style="margin-top:24px;">
+      <div class="card-title">My Service Requests</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>Qty</th><th>Requested At</th><th>Status</th></tr></thead>
+          <tbody id="myRequestsTable"><tr><td colspan="4"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <div class="cart-title">Your Order</div>
+    <button onclick="toggleCart()" style="background:none;border:none;cursor:pointer;font-size:20px;color:#6b7a8d;">×</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <p style="text-align:center;color:#6b7a8d;padding:24px 0;">Your cart is empty</p>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total"><span>Total</span><span id="cartTotal">$0.00</span></div>
+    <div class="form-group">
+      <label>Notes (optional)</label>
+      <textarea id="orderNotes" placeholder="Any special requests..." style="min-height:60px;"></textarea>
+    </div>
+    <button class="btn btn-gold w-full" onclick="placeOrder()">Place Order</button>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+requireGuest();
+initSidebar();
+
+const catIcons = { Food:'🍽️', Beverage:'🥤', Housekeeping:'🛏️', Laundry:'👕', Maintenance:'🔧' };
+let cart = {};
+let menuItems = [];
+let activeBookingId = null;
+
+async function init() {
+  try {
+    const bookings = await api.get('/bookings');
+    const active = bookings.find(b => b.Status === 'Checked-In');
+    if (!active) {
+      document.getElementById('noBookingMsg').style.display = 'block';
+      document.getElementById('menuArea').style.display = 'none';
+      document.getElementById('myRequestsCard').style.display = 'none';
+      loadMyRequests(bookings);
+      return;
+    }
+    activeBookingId = active.BookingId;
+    loadMenu();
+    loadMyRequests(bookings);
+  } catch(e) {
+    showAlert('alertBox', e.message);
+  }
+}
+
+async function loadMenu() {
+  try {
+    menuItems = await api.get('/services/menu');
+    const grouped = {};
+    menuItems.forEach(item => {
+      if (!grouped[item.Category]) grouped[item.Category] = [];
+      grouped[item.Category].push(item);
+    });
+
+    const menuArea = document.getElementById('menuArea');
+    menuArea.innerHTML = Object.entries(grouped).map(([cat, items]) => `
+      <div class="category-section">
+        <div class="category-title">${catIcons[cat] || '•'} ${cat}</div>
+        <div class="menu-grid">
+          ${items.filter(i => i.IsAvailable).map(item => `
+            <div class="menu-item">
+              <div class="menu-item-name">${item.ItemName}</div>
+              <div class="menu-item-price">$${parseFloat(item.Price).toFixed(2)}</div>
+              <div class="menu-item-footer">
+                <div class="qty-control">
+                  <button class="qty-btn" onclick="changeQty(${item.ItemId}, -1)">−</button>
+                  <span class="qty-val" id="qty-${item.ItemId}">0</span>
+                  <button class="qty-btn" onclick="changeQty(${item.ItemId}, 1)">+</button>
+                </div>
+                <button class="btn btn-sm btn-gold" onclick="addToCart(${item.ItemId})">Add</button>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    showAlert('alertBox', 'Could not load menu: ' + e.message);
+  }
+}
+
+async function loadMyRequests(bookings) {
+  try {
+    const reqs = await api.get('/services/requests');
+    const tbody = document.getElementById('myRequestsTable');
+    if (reqs.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:#6b7a8d;">No requests yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = reqs.map(r => `<tr>
+      <td>${r.ItemName}</td><td>${r.Quantity}</td>
+      <td>${formatDate(r.RequestedAt)}</td><td>${statusBadge(r.Status)}</td>
+    </tr>`).join('');
+  } catch(e) {}
+}
+
+function changeQty(itemId, delta) {
+  const el = document.getElementById(`qty-${itemId}`);
+  let val = parseInt(el.textContent) + delta;
+  if (val < 0) val = 0;
+  el.textContent = val;
+}
+
+function addToCart(itemId) {
+  const qty = parseInt(document.getElementById(`qty-${itemId}`).textContent);
+  if (qty === 0) { showAlert('alertBox','Select a quantity first.'); return; }
+  const item = menuItems.find(i => i.ItemId === itemId);
+  if (!item) return;
+  cart[itemId] = { item, qty: (cart[itemId]?.qty || 0) + qty };
+  document.getElementById(`qty-${itemId}`).textContent = '0';
+  renderCart();
+  showAlert('alertBox', `${item.ItemName} added to cart!`, 'success');
+}
+
+function renderCart() {
+  const keys = Object.keys(cart);
+  const badge = document.getElementById('cartBadge');
+  const totalItems = keys.reduce((sum, k) => sum + cart[k].qty, 0);
+  badge.style.display = totalItems > 0 ? 'flex' : 'none';
+  badge.textContent = totalItems;
+
+  const cartItems = document.getElementById('cartItems');
+  if (keys.length === 0) {
+    cartItems.innerHTML = '<p style="text-align:center;color:#6b7a8d;padding:24px 0;">Your cart is empty</p>';
+    document.getElementById('cartTotal').textContent = '$0.00';
+    return;
+  }
+
+  let total = 0;
+  cartItems.innerHTML = keys.map(k => {
+    const { item, qty } = cart[k];
+    const subtotal = item.Price * qty;
+    total += subtotal;
+    return `<div class="cart-item">
+      <div><div style="font-weight:500;">${item.ItemName}</div><div style="font-size:12px;color:#6b7a8d;">$${parseFloat(item.Price).toFixed(2)} × ${qty}</div></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-weight:600;">$${subtotal.toFixed(2)}</span>
+        <button onclick="removeFromCart(${k})" style="background:none;border:none;cursor:pointer;color:var(--danger);font-size:16px;">×</button>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
+}
+
+function removeFromCart(itemId) {
+  delete cart[itemId];
+  renderCart();
+}
+
+function toggleCart() {
+  document.getElementById('cartPanel').classList.toggle('open');
+}
+
+async function placeOrder() {
+  if (!activeBookingId) { showAlert('alertBox','You must be checked in to order room service.'); return; }
+  const items = Object.values(cart);
+  if (items.length === 0) { showAlert('alertBox','Your cart is empty.'); return; }
+
+  try {
+    for (const { item, qty } of items) {
+      await api.post('/services/request', {
+        BookingId: activeBookingId,
+        ItemId: item.ItemId,
+        Quantity: qty,
+        Notes: document.getElementById('orderNotes').value,
+      });
+    }
+    cart = {};
+    renderCart();
+    document.getElementById('cartPanel').classList.remove('open');
+    document.getElementById('orderNotes').value = '';
+    showAlert('alertBox', 'Order placed successfully! We will deliver shortly.', 'success');
+    loadMyRequests([]);
+  } catch(e) {
+    showAlert('alertBox', e.message);
+  }
+}
+
+init();
+</script>
+</body>
+</html>

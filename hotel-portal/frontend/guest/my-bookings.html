@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Bookings — Grand Palace Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<div id="sidebarOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99;"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><div class="logo-icon">GP</div><div><div class="logo-text">Grand Palace</div><div class="logo-sub">Guest Portal</div></div></div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>My Dashboard</a>
+    <a href="browse-rooms.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Browse Rooms</a>
+    <a href="my-bookings.html" class="nav-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>My Bookings</a>
+    <a href="room-service.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>Room Service</a>
+    <a href="about.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About Us</a>
+    <a href="contact.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Contact Us</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info"><div class="user-avatar" id="userAvatar">G</div><div><div class="user-name" id="userName">Guest</div><div class="user-role" id="userRole">Guest</div></div></div>
+    <button class="logout-btn" onclick="logout()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+  </div>
+</aside>
+
+<div class="main-content">
+  <div class="top-bar">
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    <h1>My Bookings</h1>
+    <a href="browse-rooms.html" class="btn btn-gold">+ New Booking</a>
+  </div>
+  <div class="page-content">
+    <div id="alertBox"></div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Booking ID</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Nights</th><th>Total</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="bookingsTable">
+            <tr><td colspan="8"><div class="loading"><div class="spinner"></div> Loading your bookings...</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+requireGuest();
+initSidebar();
+
+async function loadBookings() {
+  try {
+    const bookings = await api.get('/bookings');
+    const tbody = document.getElementById('bookingsTable');
+    if (bookings.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">
+        <p>No bookings yet</p>
+        <span>Browse rooms and make your first booking!</span>
+        <br><br><a href="browse-rooms.html" class="btn btn-gold" style="margin-top:12px;">Browse Rooms</a>
+      </div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = bookings.map(b => {
+      const canCancel = ['Pending','Confirmed'].includes(b.Status);
+      return `<tr>
+        <td><span style="font-size:12px;color:#6b7a8d;">#${b.BookingId}</span></td>
+        <td><strong>Room ${b.RoomNumber || b.RoomId}</strong><br><span style="font-size:12px;color:#6b7a8d;">${b.RoomType || ''}</span></td>
+        <td>${formatDate(b.CheckInDate)}</td>
+        <td>${formatDate(b.CheckOutDate)}</td>
+        <td>${b.Nights}</td>
+        <td><strong>${formatCurrency(b.TotalPrice)}</strong></td>
+        <td>${statusBadge(b.Status)}</td>
+        <td>${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelBooking(${b.BookingId})">Cancel</button>` : '<span style="color:#6b7a8d;font-size:12px;">—</span>'}</td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    showAlert('alertBox', e.message);
+  }
+}
+
+async function cancelBooking(id) {
+  if (!confirmAction('Cancel this booking? This cannot be undone.')) return;
+  try {
+    await api.delete(`/bookings/${id}`);
+    showAlert('alertBox', 'Booking cancelled successfully.', 'success');
+    loadBookings();
+  } catch(e) {
+    showAlert('alertBox', e.message);
+  }
+}
+
+loadBookings();
+</script>
+</body>
+</html>

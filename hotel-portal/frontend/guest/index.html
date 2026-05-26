@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grand Palace Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+.welcome-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  border-radius: 14px; padding: 32px; margin-bottom: 28px; color: #fff; position: relative; overflow: hidden;
+}
+.welcome-banner::after { content:'GP'; position:absolute; right:-10px; top:-20px; font-family:'Playfair Display',serif; font-size:160px; font-weight:700; color:rgba(255,255,255,0.04); line-height:1; }
+.welcome-title { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; margin-bottom:6px; }
+.welcome-sub { color:rgba(255,255,255,0.6); font-size:14px; }
+.quick-actions { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:28px; }
+.action-card {
+  background:#fff; border-radius:var(--radius); padding:24px; border:1px solid var(--border); box-shadow:var(--shadow);
+  cursor:pointer; transition:all 0.2s; text-align:center; text-decoration:none; color:var(--text); display:block;
+}
+.action-card:hover { border-color:var(--gold); box-shadow:0 4px 16px rgba(201,168,76,0.15); transform:translateY(-2px); }
+.action-icon { width:52px; height:52px; border-radius:14px; background:rgba(201,168,76,0.12); display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:var(--gold-dark); }
+.action-title { font-weight:600; font-size:15px; margin-bottom:4px; }
+.action-desc { font-size:12px; color:var(--text-muted); }
+
+/* --- NEW CAROUSEL STYLES --- */
+.carousel-section { margin-bottom: 40px; position: relative; }
+.section-heading { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin-bottom: 16px; color: var(--navy); }
+.carousel-container { position: relative; overflow: hidden; border-radius: 14px; }
+.carousel-track { display: flex; transition: transform 0.4s ease-in-out; width: 100%; }
+.carousel-card { 
+  min-width: 100%; box-sizing: border-box; background: #fff; border: 1px solid var(--border); 
+  border-radius: 14px; display: flex; overflow: hidden; min-height: 200px;
+}
+.carousel-img { width: 40%; background-size: cover; background-position: center; background-color: #f0f0f0; min-height: 200px; }
+.carousel-content { width: 60%; padding: 28px; display: flex; flex-direction: column; justify-content: center; }
+.carousel-tag { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--gold-dark); font-weight: 600; margin-bottom: 6px; }
+.carousel-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--navy); }
+.carousel-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
+.carousel-btn { 
+  align-self: flex-start; padding: 8px 16px; background: var(--navy); color: #fff; 
+  text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: 500; transition: background 0.2s; 
+}
+.carousel-btn:hover { background: var(--gold-dark); }
+.carousel-nav-btn {
+  position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; 
+  background: rgba(255,255,255,0.9); border: 1px solid var(--border); border-radius: 50%; 
+  display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: all 0.2s;
+}
+.carousel-nav-btn:hover { background: #fff; border-color: var(--gold); color: var(--gold-dark); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.carousel-prev { left: 12px; }
+.carousel-next { right: 12px; }
+
+/* --- NEW FOOTER STYLES --- */
+.main-footer {
+  background: #fff; border-top: 1px solid var(--border); padding: 40px 0 24px; margin-top: 60px;
+}
+.footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px; margin-bottom: 32px; }
+.footer-col-brand .footer-logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.footer-col-brand p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+.footer-title { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; color: var(--navy); }
+.footer-links { list-style: none; padding: 0; margin: 0; }
+.footer-links li { margin-bottom: 10px; }
+.footer-links a { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--gold-dark); }
+.footer-bottom { border-top: 1px solid var(--border); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-copy { font-size: 12px; color: var(--text-muted); }
+.footer-legal a { font-size: 12px; color: var(--text-muted); text-decoration: none; margin-left: 16px; }
+.footer-legal a:hover { color: var(--gold-dark); }
+
+/* --- CRITICAL MOBILE & HAMBURGER STYLES --- */
+@media (max-width: 768px) {
+  .carousel-card { flex-direction: column; }
+  .carousel-img { width: 100%; min-height: 140px; }
+  .carousel-content { width: 100%; padding: 20px; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .footer-legal a { margin: 0 8px; }
+
+  /* Force overlay to sit right below the mobile sidebar */
+  #sidebarOverlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 998;
+  }
+
+  /* Force the sidebar to hide left, and animate smoothly */
+  .sidebar {
+    position: fixed !important;
+    left: -280px !important;
+    top: 0; bottom: 0;
+    width: 260px;
+    background: #fff !important;
+    z-index: 999 !important;
+    transition: left 0.3s ease-in-out !important;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.1);
+  }
+
+  /* Slide-in class */
+  .sidebar.open {
+    left: 0 !important;
+  }
+
+  /* Make sure the hamburger button is visible and big enough to tap */
+  .hamburger {
+    display: block !important;
+    cursor: pointer;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    z-index: 1001;
+  }
+  .hamburger span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: #112233; /* Fallback dark color if var(--navy) isn't loaded */
+    background: var(--navy);
+    margin: 5px 0;
+    transition: 0.3s;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="sidebarOverlay" style="display:none;"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><div class="logo-icon">GP</div><div><div class="logo-text">Grand Palace</div><div class="logo-sub">Guest Portal</div></div></div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="nav-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>My Dashboard</a>
+    <a href="browse-rooms.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Browse Rooms</a>
+    <a href="my-bookings.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>My Bookings</a>
+    <a href="room-service.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>Room Service</a>
+    <a href="about.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About Us</a>
+    <a href="contact.html" class="nav-item"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Contact Us</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info"><div class="user-avatar" id="userAvatar">G</div><div><div class="user-name" id="userName">Guest</div><div class="user-role" id="userRole">Guest</div></div></div>
+    <button class="logout-btn" onclick="logout()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+  </div>
+</aside>
+
+<div class="main-content">
+  <header class="main-header">
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    <h1>My Dashboard</h1>
+  </header>
+  <div class="page-content">
+    <div class="welcome-banner">
+      <div class="welcome-title">Welcome back, <span id="welcomeName">Guest</span>!</div>
+      <div class="welcome-sub">Manage your bookings and room services from here.</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon blue"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/></svg></div><div><div class="stat-label">Active Bookings</div><div class="stat-value" id="statActive">—</div></div></div>
+      <div class="stat-card"><div class="stat-icon green"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="stat-label">Total Stays</div><div class="stat-value" id="statTotal">—</div></div></div>
+      <div class="stat-card"><div class="stat-icon gold"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div><div><div class="stat-label">Next Check-in</div><div class="stat-value" id="statNextCheckin" style="font-size:16px;">—</div></div></div>
+    </div>
+
+    <div class="quick-actions">
+      <a href="browse-rooms.html" class="action-card">
+        <div class="action-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+        <div class="action-title">Browse & Book Rooms</div>
+        <div class="action-desc">Search available rooms by date and type</div>
+      </a>
+      <a href="my-bookings.html" class="action-card">
+        <div class="action-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div class="action-title">My Bookings</div>
+        <div class="action-desc">View and manage your reservations</div>
+      </a>
+      <a href="room-service.html" class="action-card">
+        <div class="action-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg></div>
+        <div class="action-title">Room Service</div>
+        <div class="action-desc">Order food, housekeeping and more</div>
+      </a>
+       <a href="about.html" class="action-card">
+        <div class="action-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+        <div class="action-title">About Us</div>
+        <div class="action-desc">Learn more about our hotel and services</div>
+      </a>
+       <a href="contact.html" class="action-card">
+        <div class="action-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div class="action-title">Contact Us</div>
+        <div class="action-desc">Get in touch with our team</div>
+      </a>
+    </div>
+
+    <div class="carousel-section">
+      <h2 class="section-heading">Exclusive Guest Offers</h2>
+      <button class="carousel-nav-btn carousel-prev" id="prevBtn" aria-label="Previous Offer">‹</button>
+      <button class="carousel-nav-btn carousel-next" id="nextBtn" aria-label="Next Offer">›</button>
+      <div class="carousel-container">
+        <div class="carousel-track" id="carouselTrack">
+          
+          <div class="carousel-card">
+            <div class="carousel-img" style="background-image: url('https://images.unsplash.com/photo-1540555700479-4be289fbecef?auto=format&fit=crop&w=600&q=80');"></div>
+            <div class="carousel-content">
+              <span class="carousel-tag">Spa & Wellness</span>
+              <h3 class="carousel-title">20% Off Royal Spa Treatment</h3>
+              <p class="carousel-desc">As a valued guest, pamper yourself with premium therapeutic treatments and full thermal suite access during your stay.</p>
+              <a href="room-service.html" class="carousel-btn">Book Treatment</a>
+            </div>
+          </div>
+
+          <div class="carousel-card">
+            <div class="carousel-img" style="background-image: url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80');"></div>
+            <div class="carousel-content">
+              <span class="carousel-tag">Fine Dining</span>
+              <h3 class="carousel-title">Complimentary Wine Pairing</h3>
+              <p class="carousel-desc">Reserve a dinner window at the Grand Pavilion tonight and receive a curated presentation of reserve vintage pairings on us.</p>
+              <a href="room-service.html" class="carousel-btn">Reserve Table</a>
+            </div>
+          </div>
+
+          <div class="carousel-card">
+            <div class="carousel-img" style="background-image: url('https://images.unsplash.com/photo-1570327702219-c6e949c5e31b?auto=format&fit=crop&w=600&q=80');"></div>
+            <div class="carousel-content">
+              <span class="carousel-tag">Family Offer</span>
+              <h3 class="carousel-title">Kids Stay Free</h3>
+              <p class="carousel-desc">Book a family suite and children under 12 stay absolutely free. Create unforgettable memories together!</p>
+              <a href="browse-rooms.html" class="carousel-btn">Find Rooms</a>
+            </div>
+          </div>
+
+          <div class="carousel-card">
+            <div class="carousel-img" style="background-image: url('https://images.unsplash.com/photo-1495365200479-c4ed1d35e1aa?auto=format&fit=crop&w=600&q=80');"></div>
+            <div class="carousel-content">
+              <span class="carousel-tag">Loyalty Perks</span>
+              <h3 class="carousel-title">Late Checkout Request</h3>
+              <p class="carousel-desc">Need a little extra time? Extend your stay until 2:00 PM. Eligible exclusively for direct portal bookings.</p>
+              <a href="my-bookings.html" class="carousel-btn">Check Eligibility</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="main-footer">
+    <div class="footer-grid">
+      <div class="footer-col-brand">
+        <div class="footer-logo">Grand Palace Hotel</div>
+        <p>Experience an incomparable standard of comfort, state-of-the-art luxuries, and tailored personal attention right in the heart of the city.</p>
+      </div>
+      <div>
+        <h4 class="footer-title">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="browse-rooms.html">Browse Rooms</a></li>
+          <li><a href="room-service.html">Room Service Menu</a></li>
+          <li><a href="about.html">About Our Heritage</a></li>
+          <li><a href="contact.html">Help & Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Contact Concierge</h4>
+        <ul class="footer-links">
+          <li><a href="tel:+1234567890">+1 (234) 567-890</a></li>
+          <li><a href="mailto:concierge@grandpalace.com">concierge@grandpalace.com</a></li>
+          <li><a href="#">Extension: 4001 (In-room)</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; 2026 Grand Palace Hotel. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // --- SIDEBAR FUNCTIONALITY ---
+    const hamburger = document.getElementById('hamburger');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.style.display = 'none';
+    }
+
+    // Toggle event on hamburger button click
+    hamburger.addEventListener('click', function(e) {
+      e.stopPropagation(); // Stops event bubbles
+      if (sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+
+    // Close layout when overlay backdrop is touched/clicked
+    overlay.addEventListener('click', closeSidebar);
+
+    // --- CAROUSEL FUNCTIONALITY ---
+    const track = document.getElementById('carouselTrack');
+    const cards = document.querySelectorAll('.carousel-card');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let currentIndex = 0;
+
+    function updateCarousel() {
+      track.style.transform = `translateX(-${currentIndex * 100}%)`;
+      track.style.width = `${cards.length * 100}%`;
+    }
+
+    nextBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % cards.length;
+      updateCarousel();
+    });
+
+    prevBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+      updateCarousel();
+    });
+  });
+</script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+try {
+  requireGuest();
+  initSidebar();
+} catch(e) { console.log('Auth files skipped'); }
+
+const name = localStorage.getItem('hotelName') || 'Guest';
+document.getElementById('welcomeName').textContent = name.split(' ')[0];
+
+async function loadStats() {
+  try {
+    const bookings = await api.get('/bookings');
+    const active = bookings.filter(b => ['Confirmed','Checked-In','Pending'].includes(b.Status));
+    document.getElementById('statActive').textContent = active.length;
+    document.getElementById('statTotal').textContent = bookings.length;
+    const upcoming = bookings.filter(b => b.Status === 'Confirmed' || b.Status === 'Pending').sort((a,b) => new Date(a.CheckInDate) - new Date(b.CheckInDate));
+    document.getElementById('statNextCheckin').textContent = upcoming.length > 0 ? formatDate(upcoming[0].CheckInDate) : 'None';
+  } catch(e) { console.error(e); }
+}
+loadStats();
+</script>
+</body>
+</html>
